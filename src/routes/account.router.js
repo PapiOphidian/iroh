@@ -1,6 +1,3 @@
-/**
- * Created by Wolke on 11.06.2017.
- */
 let router = require('express').Router();
 const winston = require('winston');
 let accountModel = require('../DB/account.mongo');

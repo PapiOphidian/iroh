@@ -1,8 +1,8 @@
 {
-  "name": "rem-account-service",
+  "name": "iroh",
   "version": "0.0.1",
   "description": "A Microservice for fetching data about accounts using the api",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,9 +11,10 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "cors": "^2.8.3",
-    "docker-config-loader": "^1.0.0",
     "express": "^4.15.3",
+    "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.10.5",
+    "raven": "^2.1.0",
     "redis": "^2.7.1",
     "shortid": "^2.2.8",
     "tsubaki": "^1.1.1",

@@ -1,5 +1,9 @@
 {
   "host": "127.0.0.1",
   "port": 9010,
-  "dburl": "mongodb://localhost/account-api"
+  "dburl": "mongodb://localhost/account-api",
+  "jwt": {
+    "algorithm": "RS256",
+    "certFile": "../jwtRS256.key"
+  }
 }
