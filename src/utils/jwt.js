@@ -4,6 +4,13 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 
+const readFileAsync = (filePath) => new Promise((resolve, reject) => {
+    fs.readFile(filePath, (err, data) => {
+        if (err) return reject(err);
+        resolve(data);
+    });
+});
+
 /**
  * Class for creating and verifying JSON web tokens
  * Call loadCert() before using sign() or verify()
@@ -25,21 +32,10 @@ class JWT {
      * 
      * @param {string} privCertFilePath The path where the cert is located
      * @param {string} pubCertFilePath The path where the public cert is located if algorithm is asym
-     * @returns {Promise<void>}
      */
-    loadCert(privCertFilePath, pubCertFilePath) {
-        return new Promise((resolve, reject) => {
-            fs.readFile(path.resolve(privCertFilePath), (err, data) => {
-                if (err) return reject(err);
-                this.cert = data;
-                if (!pubCertFilePath) return resolve();
-                fs.readFile(path.resolve(pubCertFilePath), (err2, data2) => {
-                    if (err2) return reject(err2);
-                    this.pubCert = data2;
-                    resolve();
-                });
-            });
-        });
+    async loadCert(privCertFilePath, pubCertFilePath) {
+        if (privCertFilePath) this.cert = await readFileAsync(path.resolve(privCertFilePath));
+        if (pubCertFilePath) this.pubCert = await readFileAsync(path.resolve(pubCertFilePath));
     }
 
     /**
@@ -66,8 +62,8 @@ class JWT {
      */
     verify(token) {
         return new Promise((resolve, reject) => {
-            if (!this.cert) return reject(Error('Certificate not loaded yet.'));
             let cert = this.pubCert ? this.pubCert : this.cert;
+            if (!this.cert) return reject(Error('Certificate not loaded yet.'));
             jwt.verify(token, cert, { algorithm: this.algorithm }, (err, decoded) => {
                 if (err) return reject(err);
                 return resolve(decoded);
