@@ -7,7 +7,7 @@ const { HTTPCodes } = require('../utils/constants');
 class AuthMiddleware extends BaseMiddleware {
     async on(req) {
         // Allow token validation to be an "unauthorized" request (it requires a valid token anyways)
-        if (req.path && req.path.startsWith('/validate')) return HTTPCodes.OK;
+        if (req.path && (req.path.startsWith('/validate') || req.path.startsWith('/pubkey'))) return HTTPCodes.OK;
 
         // Check every other path for authorization
         if (!req.headers || !req.headers.authorization) return HTTPCodes.UNAUTHORIZED;

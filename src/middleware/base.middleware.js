@@ -24,7 +24,7 @@ class BaseMiddleware {
                 res.status(response.status).json(response);
             } catch (e) {
                 winston.error(e);
-                let response = this.getResponse(500);
+                let response = this.getResponse(HTTPCodes.INTERNAL_SERVER_ERROR);
                 res.status(response.status).json(response);
             }
         };

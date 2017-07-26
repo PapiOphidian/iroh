@@ -13,6 +13,9 @@ class AccountRouter extends BaseRouter {
         // Get all accounts
         this.get('/info', async() => ({ accounts: await accountModel.find({}) }));
 
+        // Get publickey
+        this.get('/pubkey', async(req) => ({ pubkey: req.jwt.pubCert.toString() }));
+
         // User get, create, update, delete
         this.get('/user', async() => ({ status: HTTPCodes.BAD_REQUEST, message: 'No ID was passed' }));
         this.get('/user/:id', async(req) => {
