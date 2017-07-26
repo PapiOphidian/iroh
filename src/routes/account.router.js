@@ -103,8 +103,8 @@ class AccountRouter extends BaseRouter {
 
             return { account };
         });
-        this.get('/token', async() => ({ status: this.httpCodes.BAD_REQUEST, message: 'No token was passed' }));
-        this.get('/token/:token', async(req) => {
+        this.get('/validate', async() => ({ status: this.httpCodes.BAD_REQUEST, message: 'No token was passed' }));
+        this.get('/validate/:token', async(req) => {
             let decoded;
             try {
                 decoded = await jwt.verify(req.params.token);
