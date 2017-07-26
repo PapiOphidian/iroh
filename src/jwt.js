@@ -14,21 +14,28 @@ class JWT {
      */
     constructor(algorithm) {
         this.cert = null;
+        this.pubCert = null;
         this.algorithm = algorithm || 'RS256';
     }
 
     /**
      * Loads the certificate from the given file path
      * 
-     * @param {string} certFilePath The path where the cert is located
+     * @param {string} privCertFilePath The path where the cert is located
+     * @param {string} pubCertFilePath The path where the public cert is located if algorithm is asym
      * @returns {Promise<void>}
      */
-    loadCert(certFilePath) {
+    loadCert(privCertFilePath, pubCertFilePath) {
         return new Promise((resolve, reject) => {
-            fs.readFile(path.resolve(certFilePath), (err, data) => {
+            fs.readFile(path.resolve(privCertFilePath), (err, data) => {
                 if (err) return reject(err);
                 this.cert = data;
-                resolve();
+                if (!pubCertFilePath) return resolve();
+                fs.readFile(path.resolve(pubCertFilePath), (err2, data2) => {
+                    if (err2) return reject(err2);
+                    this.pubCert = data2;
+                    resolve();
+                });
             });
         });
     }
@@ -58,7 +65,8 @@ class JWT {
     verify(token) {
         return new Promise((resolve, reject) => {
             if (!this.cert) return reject(Error('Certificate not loaded yet.'));
-            jwt.verify(token, this.cert, { algorithm: this.algorithm }, (err, decoded) => {
+            let cert = this.pubCert ? this.pubCert : this.cert;
+            jwt.verify(token, cert, { algorithm: this.algorithm }, (err, decoded) => {
                 if (err) return reject(err);
                 return resolve(decoded);
             });

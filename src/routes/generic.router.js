@@ -1,6 +1,12 @@
-let router = require('express').Router();
+const BaseRouter = require('./base.router');
 const version = require('../../package.json').version;
-router.all('/', ((req, res) => {
-    return res.status(200).json({status:200, version, message: 'Welcome to the rem-account-api'})
-}));
-module.exports = router;
+
+class GenericRouter extends BaseRouter {
+    constructor() {
+        super();
+
+        this.all('/', async() => ({ version, message: 'Welcome to the weeb account api' }));
+    }
+}
+
+module.exports = GenericRouter;

@@ -4,6 +4,7 @@
   "dburl": "mongodb://localhost/account-api",
   "jwt": {
     "algorithm": "RS256",
-    "certFile": "../jwtRS256.key"
+    "privCertFile": "jwtRS256.key",
+    "pubCertFile": "jwtRS256.key.pub"
   }
 }

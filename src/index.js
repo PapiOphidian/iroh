@@ -6,8 +6,9 @@ const mongoose = require('mongoose');
 mongoose.Promise = Promise;
 
 const JWT = require('./jwt');
-const genericRouter = require('./routes/generic.router');
-const accountRouter = require('./routes/account.router');
+const GenericRouter = require('./routes/generic.router');
+const AccountRouter = require('./routes/account.router');
+const WildcardRouter = require('./routes/wildcard.router');
 
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
@@ -28,7 +29,7 @@ class Base {
 
         this.jwt = new JWT(config.jwt.algorithm);
         try {
-            await this.jwt.loadCert(config.jwt.certFile);
+            await this.jwt.loadCert(config.jwt.privCertFile, config.jwt.pubCertFile);
         } catch (e) {
             winston.error(e);
             winston.error('Failed to load JWT key!');
@@ -42,25 +43,25 @@ class Base {
             }
         });
 
-        let app = express();
-        app.use((req, res, next) => {
+        this.app = express();
+        this.app.use((req, res, next) => {
             req.config = config;
             next();
         });
 
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
-        app.use(cors());
-        app.use(genericRouter, accountRouter);
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: true }));
+        this.app.use(cors());
+        this.app.use(new GenericRouter().router(), new AccountRouter(this.jwt).router(), new WildcardRouter().router());
 
-        app.listen(config.port, config.host);
+        this.app.listen(config.port, config.host);
 
         winston.info(`Server started ${config.host}:${config.port}`);
     }
 }
 
-global.base = new Base();
-global.base.init().catch(e => {
+let base = new Base();
+base.init().catch(e => {
     winston.error(e);
     winston.error('Failed to initialize.');
     process.exit(1);
