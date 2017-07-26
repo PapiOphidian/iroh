@@ -1,3 +1,5 @@
+'use strict';
+
 const BaseRouter = require('./base.router');
 
 class WildcardRouter extends BaseRouter {

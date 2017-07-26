@@ -1,3 +1,5 @@
+'use strict';
+
 const BaseRouter = require('./base.router');
 const version = require('../../package.json').version;
 

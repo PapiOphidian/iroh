@@ -1,6 +1,8 @@
+'use strict';
+
 const mongoose = require('mongoose');
 
-let accountSchema = mongoose.Schema({
+const accountSchema = mongoose.Schema({
     id: String,
     name: String,
     discordUserId: String,
@@ -9,5 +11,5 @@ let accountSchema = mongoose.Schema({
     scopes: [String],
 });
 
-let accountModel = mongoose.model('Accounts', accountSchema);
+const accountModel = mongoose.model('Accounts', accountSchema);
 module.exports = accountModel;
