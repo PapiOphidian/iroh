@@ -6,5 +6,9 @@
     "algorithm": "RS256",
     "privCertFile": "jwtRS256.key",
     "pubCertFile": "jwtRS256.key.pub"
+  },
+  "masterToken": {
+    "enable": false,
+    "token": ""
   }
 }

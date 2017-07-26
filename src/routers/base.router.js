@@ -1,30 +1,13 @@
 const router = require('express').Router();
 const winston = require('winston');
 
-class BaseRouter {
-    constructor() {
-        this.httpCodes = {
-            OK: 200,
-            BAD_REQUEST: 400,
-            UNAUTHORIZED: 401,
-            FORBIDDEN: 403,
-            NOT_FOUND: 404,
-            INTERNAL_SERVER_ERROR: 500,
-        };
-        this.defaultResponses = {
-            200: 'OK',
-            400: 'Bad Request',
-            401: 'Unauthorized',
-            403: 'Forbidden',
-            404: 'Not Found',
-            500: 'Internal Server Error',
-        };
-    }
+const { HTTPCodes, DefaultResponses } = require('../utils/constants');
 
+class BaseRouter {
     handleResponse(res, response) {
-        if (typeof response === 'number') return res.status(response).json({ status: response, message: this.defaultResponses[response] });
-        if (!response.status) response.status = 200;
-        if (response.status !== 200 && !response.message) response.message = this.defaultResponses[response.status];
+        if (typeof response === 'number') return res.status(response).json({ status: response, message: DefaultResponses[response] });
+        if (!response.status) response.status = HTTPCodes.OK;
+        if (response.status !== HTTPCodes.OK && !response.message) response.message = DefaultResponses[response.status];
         res.status(response.status).json(response);
     }
 
@@ -34,7 +17,7 @@ class BaseRouter {
                 this.handleResponse(res, await handler(req, res));
             } catch (e) {
                 winston.error(e);
-                this.handleResponse(res, 500);
+                this.handleResponse(res, HTTPCodes.INTERNAL_SERVER_ERROR);
             }
         };
     }

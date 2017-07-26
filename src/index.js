@@ -5,10 +5,11 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 mongoose.Promise = Promise;
 
-const JWT = require('./jwt');
-const GenericRouter = require('./routes/generic.router');
-const AccountRouter = require('./routes/account.router');
-const WildcardRouter = require('./routes/wildcard.router');
+const JWT = require('./utils/jwt');
+const AuthMiddleware = require('./middleware/auth.middleware');
+const GenericRouter = require('./routers/generic.router');
+const AccountRouter = require('./routers/account.router');
+const WildcardRouter = require('./routers/wildcard.router');
 
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
@@ -16,52 +17,67 @@ winston.add(winston.transports.Console, {
     colorize: true,
 });
 
-class Base {
-    async init() {
-        let config;
-        try {
-            config = require('../config/main.json');
-        } catch (e) {
-            winston.error(e);
-            winston.error('Failed to require config!');
-            process.exit(1);
-        }
-
-        this.jwt = new JWT(config.jwt.algorithm);
-        try {
-            await this.jwt.loadCert(config.jwt.privCertFile, config.jwt.pubCertFile);
-        } catch (e) {
-            winston.error(e);
-            winston.error('Failed to load JWT key!');
-            process.exit(1);
-        }
-
-        mongoose.connect(config.dburl, { useMongoClient: true }, (err) => {
-            if (err) {
-                winston.error('Unable to connect to Mongo Server!');
-                process.exit(1);
-            }
-        });
-
-        this.app = express();
-        this.app.use((req, res, next) => {
-            req.config = config;
-            next();
-        });
-
-        this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({ extended: true }));
-        this.app.use(cors());
-        this.app.use(new GenericRouter().router(), new AccountRouter(this.jwt).router(), new WildcardRouter().router());
-
-        this.app.listen(config.port, config.host);
-
-        winston.info(`Server started ${config.host}:${config.port}`);
+let init = async() => {
+    let config;
+    try {
+        config = require('../config/main.json');
+    } catch (e) {
+        winston.error(e);
+        winston.error('Failed to require config.');
+        return process.exit(1);
     }
-}
+    winston.info('Config loaded.');
 
-let base = new Base();
-base.init().catch(e => {
+    if (config.masterToken.enabled) winston.warn('Master token is enabled!');
+
+    let jwt = new JWT(config.jwt.algorithm);
+    try {
+        await jwt.loadCert(config.jwt.privCertFile, config.jwt.pubCertFile);
+    } catch (e) {
+        winston.error(e);
+        winston.error('Failed to load JWT key.');
+        return process.exit(1);
+    }
+    winston.info('JWT initialized.');
+
+    try {
+        await mongoose.connect(config.dburl, { useMongoClient: true });
+    } catch (e) {
+        winston.error('Unable to connect to Mongo Server.');
+        return process.exit(1);
+    }
+    winston.info('MongoDB connected.');
+
+    // Initialize express
+    let app = express();
+
+    // Middleware for config & jwt
+    app.use((req, res, next) => {
+        req.config = config;
+        req.jwt = jwt;
+        next();
+    });
+
+    // Some other middleware
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(cors());
+
+    // Auth middleware
+    app.use(new AuthMiddleware().middleware());
+
+    // Routers
+    app.use(new GenericRouter().router());
+    app.use(new AccountRouter().router());
+
+    // Always use this last
+    app.use(new WildcardRouter().router());
+
+    app.listen(config.port, config.host);
+    winston.info(`Server started on ${config.host}:${config.port}`);
+};
+
+init().catch(e => {
     winston.error(e);
     winston.error('Failed to initialize.');
     process.exit(1);
