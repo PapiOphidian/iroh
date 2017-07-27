@@ -7,7 +7,7 @@ const { HTTPCodes } = require('../utils/constants');
 class AuthMiddleware extends BaseMiddleware {
     async on(req) {
         // Allow token validation to be an "unauthorized" request (it requires a valid token anyways)
-        if (req.path && (req.path.startsWith('/validate') || req.path.startsWith('/pubkey'))) return HTTPCodes.OK;
+        if (req.path && (req.path.startsWith('/validate') || req.path.startsWith('/pubkey') || req.path === '/')) return HTTPCodes.OK;
 
         // Check every other path for authorization
         if (!req.headers || !req.headers.authorization) return HTTPCodes.UNAUTHORIZED;
@@ -16,7 +16,7 @@ class AuthMiddleware extends BaseMiddleware {
         let jwtoken = authHeader.split('Bearer ')[1];
         if (jwtoken === '') return HTTPCodes.UNAUTHORIZED;
 
-        if (req.config && req.config.masterToken && req.config.masterToken.enabled && jwtoken === req.config.masterToken.token) return HTTPCodes.OK;
+        if (req.config && req.config.masterToken && req.config.masterToken.enable && jwtoken === req.config.masterToken.token) return HTTPCodes.OK;
 
         let decoded;
         try {
@@ -28,9 +28,9 @@ class AuthMiddleware extends BaseMiddleware {
             throw e;
         }
 
-        let account = await accountModel.findOne({ id: decoded.userID });
+        let account = await accountModel.findOne({ id: decoded.userId });
         if (!account) return HTTPCodes.UNAUTHORIZED;
-        if (account.tokens.indexOf(decoded.tokenID) === -1) return HTTPCodes.UNAUTHORIZED;
+        if (account.tokens.indexOf(decoded.tokenId) === -1) return HTTPCodes.UNAUTHORIZED;
         if (account.scopes.indexOf('admin') === -1) return HTTPCodes.UNAUTHORIZED;
 
         req.authUser = account;

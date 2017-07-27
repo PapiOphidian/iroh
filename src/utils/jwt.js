@@ -18,7 +18,7 @@ const readFileAsync = (filePath) => new Promise((resolve, reject) => {
 class JWT {
     /**
      * Creates a new JWT handler instance
-     * 
+     *
      * @param {string} algorithm The algorithm to be used. If undefined RS256 will be used as algorithm.
      */
     constructor(algorithm) {
@@ -29,7 +29,7 @@ class JWT {
 
     /**
      * Loads the certificate from the given file path
-     * 
+     *
      * @param {string} privCertFilePath The path where the cert is located
      * @param {string} pubCertFilePath The path where the public cert is located if algorithm is asym
      */
@@ -40,8 +40,8 @@ class JWT {
 
     /**
      * Signs a payload and returns a JSON web token
-     * 
-     * @param {any} payload The payload to be signed
+     *
+     * @param {Object} payload The payload to be signed
      * @returns {Promise<string>} The JSON web token
      */
     sign(payload) {
@@ -56,9 +56,9 @@ class JWT {
 
     /**
      * Verifies a JSON web token and returns its payload
-     * 
+     *
      * @param {string} token The JSON web token
-     * @returns {Promise<any>} The payload
+     * @returns {Promise<Object|Error>} The payload
      */
     verify(token) {
         return new Promise((resolve, reject) => {
@@ -73,13 +73,13 @@ class JWT {
 
     /**
      * Decodes a JSON web token
-     * 
+     *
      * WARNING: DO NOT USE THIS FUNCTION FOR UNTRUSTED TOKENS
      * ONLY USE THIS FUNCTION FOR GETTING THE DATA
      * USE verify() IF YOU HAVE AN UNTRUSTED TOKEN
-     * 
+     *
      * @param {string} token The JSON web token
-     * @returns {any} The payload
+     * @returns {Object} The payload
      */
     decode(token) {
         return jwt.decode(token);

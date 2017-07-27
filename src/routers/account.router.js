@@ -10,14 +10,13 @@ class AccountRouter extends BaseRouter {
     constructor() {
         super();
 
-        // Get all accounts
-        this.get('/info', async() => ({ accounts: await accountModel.find({}) }));
-
         // Get publickey
         this.get('/pubkey', async(req) => ({ pubkey: req.jwt.pubCert.toString() }));
 
         // User get, create, update, delete
-        this.get('/user', async() => ({ status: HTTPCodes.BAD_REQUEST, message: 'No ID was passed' }));
+        // Get all accounts
+        this.get('/user', async() => ({ accounts: await accountModel.find({}) }));
+
         this.get('/user/:id', async(req) => {
             let account = await accountModel.findOne({ id: req.params.id });
             if (!account) return { status: HTTPCodes.NOT_FOUND, message: 'No account exists with this ID' };
@@ -37,8 +36,7 @@ class AccountRouter extends BaseRouter {
             let name = req.body.name;
             let discordUserId = req.body.discordUserId;
             let active = req.body.active !== undefined ? req.body.active : true;
-            // TODO define default scopes
-            let scopes = req.body.scopes ? req.body.scopes.toString().split(',') : [];
+            let scopes = req.body.scopes ? typeof req.body.scopes.map === 'function' ? req.body.scopes :req.body.scopes.toString().split(',') : [];
 
             let validate = this.validate(name, discordUserId, active, scopes);
             if (validate) return validate;
@@ -68,7 +66,7 @@ class AccountRouter extends BaseRouter {
                 modified = true;
             }
             if (req.body.scopes) {
-                account.scopes = req.body.scopes.toString().split(',');
+                account.scopes = req.body.scopes ? typeof req.body.scopes.map === 'function' ? req.body.scopes :req.body.scopes.toString().split(',') : [];
                 modified = true;
             }
 
@@ -82,24 +80,24 @@ class AccountRouter extends BaseRouter {
 
         // Token get, create, delete
         this.post('/token/create', async(req) => {
-            if (!req.body || !req.body.userID) return { status: HTTPCodes.BAD_REQUEST, message: 'Missing user ID' };
+            if (!req.body || !req.body.userId) return { status: HTTPCodes.BAD_REQUEST, message: 'Missing user Id' };
 
-            let account = await accountModel.findOne({ id: req.body.userID });
-            if (!account) return { status: HTTPCodes.NOT_FOUND, message: 'No account exists with this ID' };
+            let account = await accountModel.findOne({ id: req.body.userId });
+            if (!account) return { status: HTTPCodes.NOT_FOUND, message: 'No account exists with this Id' };
 
-            let tokenID = shortid.generate();
+            let tokenId = shortid.generate();
 
-            let token = await req.jwt.sign({ userID: account.id, tokenID });
-            account.tokens.push(tokenID);
+            let token = await req.jwt.sign({ userId: account.id, tokenId });
+            account.tokens.push(tokenId);
             await account.save();
 
-            return { account, tokenID, token };
+            return { account, tokenId, token };
         });
-        this.delete('/token', async() => ({ status: HTTPCodes.BAD_REQUEST, message: 'Missing token ID' }));
+        this.delete('/token', async() => ({ status: HTTPCodes.BAD_REQUEST, message: 'Missing token Id' }));
         this.delete('/token/:id', async(req) => {
             // TODO consider adding support for full JWT token
             let account = await accountModel.findOne({ tokens: req.params.id });
-            if (!account) return { status: HTTPCodes.NOT_FOUND, message: 'No user with this token ID could be found' };
+            if (!account) return { status: HTTPCodes.NOT_FOUND, message: 'No user with this token Id could be found' };
 
             let index = account.tokens.indexOf(req.params.id);
             if (index === -1) return HTTPCodes.INTERNAL_SERVER_ERROR;
@@ -121,9 +119,9 @@ class AccountRouter extends BaseRouter {
                 throw e;
             }
 
-            let account = await accountModel.findOne({ id: decoded.userID });
+            let account = await accountModel.findOne({ id: decoded.userId });
             if (!account) return { status: HTTPCodes.NOT_FOUND, message: 'No user with this token could be found' };
-            if (account.tokens.indexOf(decoded.tokenID) === -1) return { status: HTTPCodes.NOT_FOUND, message: 'The token could not be found in the user' };
+            if (account.tokens.indexOf(decoded.tokenId) === -1) return { status: HTTPCodes.NOT_FOUND, message: 'The token could not be found in the user' };
 
             return { iat: decoded.iat, account };
         });
@@ -141,22 +139,10 @@ class AccountRouter extends BaseRouter {
         return boolean === true || boolean === false || boolean === 'true' || boolean === 'false';
     }
 
-    isValidScope(scope) {
-        return ['admin'].indexOf(scope) > -1;
-    }
-
-    validateScopes(scopes) {
-        for (let i = 0; i < scopes.length; i++) {
-            if (!this.isValidScope(scopes[i])) return false;
-        }
-        return true;
-    }
-
     validate(name, discordUserId, active, scopes) {
         if (!this.isValidName(name)) return { status: HTTPCodes.BAD_REQUEST, message: 'Invalid name' };
         if (!this.isValidSnowflake(discordUserId)) return { status: HTTPCodes.BAD_REQUEST, message: 'Invalid discordUserId' };
         if (!this.isValidBoolean(active)) return { status: HTTPCodes.BAD_REQUEST, message: 'Invalid active' };
-        if (!this.validateScopes(scopes)) return { status: HTTPCodes.BAD_REQUEST, message: 'Invalid scopes' };
         return null;
     }
 }
