@@ -3,8 +3,8 @@
 const accountModel = require('../DB/account.mongo');
 const shortid = require('shortid');
 
-const BaseRouter = require('./base.router');
-const { HTTPCodes } = require('../utils/constants');
+const { BaseRouter } = require('wapi-core');
+const { HTTPCodes } = require('wapi-core').Constants;
 
 class AccountRouter extends BaseRouter {
     constructor() {

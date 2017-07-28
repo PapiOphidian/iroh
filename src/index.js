@@ -5,19 +5,12 @@ const bodyParser = require('body-parser');
 const winston = require('winston');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const { GenericRouter, WildcardRouter } = require('wapi-core');
 mongoose.Promise = Promise;
 
 const JWT = require('./utils/jwt');
 const AuthMiddleware = require('./middleware/auth.middleware');
-const GenericRouter = require('./routers/generic.router');
 const AccountRouter = require('./routers/account.router');
-const WildcardRouter = require('./routers/wildcard.router');
-
-winston.remove(winston.transports.Console);
-winston.add(winston.transports.Console, {
-    timestamp: true,
-    colorize: true,
-});
 
 let init = async() => {
     let config;
@@ -69,7 +62,7 @@ let init = async() => {
     app.use(new AuthMiddleware().middleware());
 
     // Routers
-    app.use(new GenericRouter().router());
+    app.use(new GenericRouter('v', 'm').router());
     app.use(new AccountRouter().router());
 
     // Always use this last

@@ -1,11 +1,12 @@
 'use strict';
 
 const accountModel = require('../DB/account.mongo');
-const BaseMiddleware = require('./base.middleware');
-const { HTTPCodes } = require('../utils/constants');
+
+const { BaseMiddleware } = require('wapi-core');
+const { HTTPCodes } = require('wapi-core').Constants;
 
 class AuthMiddleware extends BaseMiddleware {
-    async on(req) {
+    async exec(req) {
         // Allow token validation to be an "unauthorized" request (it requires a valid token anyways)
         if (req.path && (req.path.startsWith('/validate') || req.path.startsWith('/pubkey') || req.path === '/')) return HTTPCodes.OK;
 
@@ -16,7 +17,7 @@ class AuthMiddleware extends BaseMiddleware {
         let jwtoken = authHeader.split('Bearer ')[1];
         if (jwtoken === '') return HTTPCodes.UNAUTHORIZED;
 
-        if (req.config && req.config.masterToken && req.config.masterToken.enable && jwtoken === req.config.masterToken.token) return HTTPCodes.OK;
+        if (req.config && req.config.masterToken && req.config.masterToken.enabled && jwtoken === req.config.masterToken.token) return HTTPCodes.OK;
 
         let decoded;
         try {
@@ -34,7 +35,7 @@ class AuthMiddleware extends BaseMiddleware {
         if (account.scopes.indexOf('admin') === -1) return HTTPCodes.UNAUTHORIZED;
 
         req.authUser = account;
-        return 200;
+        return HTTPCodes.OK;
     }
 }
 

@@ -14,10 +14,9 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "cors": "^2.8.3",
-    "express": "^4.15.3",
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.10.5",
     "shortid": "^2.2.8",
-    "winston": "^2.3.1"
+    "wapi-core": "git+ssh://git@github.com:weeb-services/wapi-core.git"
   }
 }

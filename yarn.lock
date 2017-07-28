@@ -109,9 +109,13 @@ debug@2.6.8:
   dependencies:
     ms "2.0.0"
 
-depd@1.1.0, depd@~1.1.0:
+depd@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/depd/-/depd-1.1.0.tgz#e1bd82c6aab6ced965b97b88b17ed3e528ca18c3"
+
+depd@~1.1.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/depd/-/depd-1.1.1.tgz#5783b4e1c459f06fa5ca27f991f3d06e7a310359"
 
 destroy@~1.0.4:
   version "1.0.4"
@@ -546,6 +550,13 @@ utils-merge@1.0.0:
 vary@^1, vary@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.1.tgz#67535ebb694c1d52257457984665323f587e8d37"
+
+"wapi-core@git+ssh://git@github.com:weeb-services/wapi-core.git":
+  version "1.0.1"
+  resolved "git+ssh://git@github.com:weeb-services/wapi-core.git#14a8a1d2712c966075f4167ea8a2b92b919fd079"
+  dependencies:
+    express "^4.15.3"
+    winston "^2.3.1"
 
 winston@^2.3.1:
   version "2.3.1"
