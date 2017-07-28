@@ -6,11 +6,14 @@ const { BaseMiddleware } = require('wapi-core');
 const { HTTPCodes } = require('wapi-core').Constants;
 
 class AuthMiddleware extends BaseMiddleware {
-    async exec(req) {
-        // Allow token validation to be an "unauthorized" request (it requires a valid token anyways)
-        if (req.path && (req.path.startsWith('/validate') || req.path.startsWith('/pubkey') || req.path === '/')) return HTTPCodes.OK;
+    constructor() {
+        super();
+        this.whitelist('/', true);
+        this.whitelist('/validate');
+        this.whitelist('/pubkey');
+    }
 
-        // Check every other path for authorization
+    async exec(req) {
         if (!req.headers || !req.headers.authorization) return HTTPCodes.UNAUTHORIZED;
         let authHeader = req.headers.authorization;
         if (!authHeader.startsWith('Bearer ')) return HTTPCodes.UNAUTHORIZED;
