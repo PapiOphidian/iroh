@@ -7,8 +7,8 @@ const HTTPCodes = require('wapi-core').Constants.HTTPCodes;
 class AuthMiddleware extends BaseMiddleware {
     constructor() {
         super();
-        this.whitelist('/', true);
-        this.whitelist('/validate');
+        this.whitelist('/');
+        this.whitelist('/validate*');
         this.whitelist('/pubkey');
     }
 

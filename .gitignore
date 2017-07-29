@@ -4,3 +4,4 @@ config/main.json
 node_modules
 jwtRS256.key
 jwtRS256.key.pub
+package-lock.json

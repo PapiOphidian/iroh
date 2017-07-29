@@ -71,7 +71,7 @@ let init = async() => {
     app.use(new AuthMiddleware().middleware());
 
     // Routers
-    app.use(new GenericRouter(pkg.version, `Welcome to the ${pkg.name}`).router());
+    app.use(new GenericRouter(pkg.version, `Welcome to ${pkg.name}, the weeb account api`).router());
     app.use(new AccountRouter().router());
 
     // Always use this last
