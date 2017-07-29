@@ -8,7 +8,7 @@
     "pubCertFile": "jwtRS256.key.pub"
   },
   "masterToken": {
-    "enable": false,
+    "enabled": false,
     "token": ""
   }
 }

@@ -5,18 +5,21 @@ const BaseMiddleware = require('wapi-core').BaseMiddleware;
 const HTTPCodes = require('wapi-core').Constants.HTTPCodes;
 
 class AuthMiddleware extends BaseMiddleware {
-    async on(req) {
-        // Allow token validation to be an "unauthorized" request (it requires a valid token anyways)
-        if (req.path && (req.path.startsWith('/validate') || req.path.startsWith('/pubkey') || req.path === '/')) return HTTPCodes.OK;
+    constructor() {
+        super();
+        this.whitelist('/', true);
+        this.whitelist('/validate');
+        this.whitelist('/pubkey');
+    }
 
-        // Check every other path for authorization
+    async exec(req) {
         if (!req.headers || !req.headers.authorization) return HTTPCodes.UNAUTHORIZED;
         let authHeader = req.headers.authorization;
         if (!authHeader.startsWith('Bearer ')) return HTTPCodes.UNAUTHORIZED;
         let jwtoken = authHeader.split('Bearer ')[1];
         if (jwtoken === '') return HTTPCodes.UNAUTHORIZED;
 
-        if (req.config && req.config.masterToken && req.config.masterToken.enable && jwtoken === req.config.masterToken.token) return HTTPCodes.OK;
+        if (req.config && req.config.masterToken && req.config.masterToken.enabled && jwtoken === req.config.masterToken.token) return HTTPCodes.OK;
 
         let decoded;
         try {
@@ -34,7 +37,7 @@ class AuthMiddleware extends BaseMiddleware {
         if (account.scopes.indexOf('admin') === -1) return HTTPCodes.UNAUTHORIZED;
 
         req.authUser = account;
-        return 200;
+        return HTTPCodes.OK;
     }
 }
 

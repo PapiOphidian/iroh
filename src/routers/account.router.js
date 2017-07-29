@@ -36,7 +36,7 @@ class AccountRouter extends BaseRouter {
             let name = req.body.name;
             let discordUserId = req.body.discordUserId;
             let active = req.body.active !== undefined ? req.body.active : true;
-            let scopes = req.body.scopes ? typeof req.body.scopes.map === 'function' ? req.body.scopes :req.body.scopes.toString().split(',') : [];
+            let scopes = req.body.scopes ? typeof req.body.scopes.map === 'function' ? req.body.scopes : req.body.scopes.toString().split(',') : [];
 
             let validate = this.validate(name, discordUserId, active, scopes);
             if (validate) return validate;
@@ -139,7 +139,7 @@ class AccountRouter extends BaseRouter {
         return boolean === true || boolean === false || boolean === 'true' || boolean === 'false';
     }
 
-    validate(name, discordUserId, active, scopes) {
+    validate(name, discordUserId, active) {
         if (!this.isValidName(name)) return { status: HTTPCodes.BAD_REQUEST, message: 'Invalid name' };
         if (!this.isValidSnowflake(discordUserId)) return { status: HTTPCodes.BAD_REQUEST, message: 'Invalid discordUserId' };
         if (!this.isValidBoolean(active)) return { status: HTTPCodes.BAD_REQUEST, message: 'Invalid active' };

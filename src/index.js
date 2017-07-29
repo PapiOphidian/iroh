@@ -10,8 +10,6 @@ mongoose.Promise = Promise;
 const JWT = require('./utils/jwt');
 const AuthMiddleware = require('./middleware/auth.middleware');
 
-const packageJson = require('../package.json');
-
 const GenericRouter = require('wapi-core').GenericRouter;
 const AccountRouter = require('./routers/account.router');
 const WildcardRouter = require('wapi-core').WildcardRouter;
@@ -23,9 +21,10 @@ winston.add(winston.transports.Console, {
 });
 
 let init = async() => {
-    let config;
+    let config, pkg;
     try {
         config = require('../config/main.json');
+        pkg = require('../package.json');
     } catch (e) {
         winston.error(e);
         winston.error('Failed to require config.');
@@ -72,7 +71,7 @@ let init = async() => {
     app.use(new AuthMiddleware().middleware());
 
     // Routers
-    app.use(new GenericRouter(packageJson.version, `Welcome to the ${packageJson.name}`).router());
+    app.use(new GenericRouter(pkg.version, `Welcome to the ${packageJson.name}`).router());
     app.use(new AccountRouter().router());
 
     // Always use this last
