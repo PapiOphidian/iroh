@@ -71,7 +71,7 @@ let init = async() => {
     app.use(new AuthMiddleware().middleware());
 
     // Routers
-    app.use(new GenericRouter(pkg.version, `Welcome to the ${packageJson.name}`).router());
+    app.use(new GenericRouter(pkg.version, `Welcome to the ${pkg.name}`).router());
     app.use(new AccountRouter().router());
 
     // Always use this last
