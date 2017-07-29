@@ -1,8 +1,8 @@
 'use strict';
 
 const accountModel = require('../DB/account.mongo');
-const BaseMiddleware = require('./base.middleware');
-const { HTTPCodes } = require('../utils/constants');
+const BaseMiddleware = require('wapi-core').BaseMiddleware;
+const HTTPCodes = require('wapi-core').Constants.HTTPCodes;
 
 class AuthMiddleware extends BaseMiddleware {
     async on(req) {

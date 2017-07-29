@@ -9,9 +9,12 @@ mongoose.Promise = Promise;
 
 const JWT = require('./utils/jwt');
 const AuthMiddleware = require('./middleware/auth.middleware');
-const GenericRouter = require('./routers/generic.router');
+
+const packageJson = require('../package.json');
+
+const GenericRouter = require('wapi-core').GenericRouter;
 const AccountRouter = require('./routers/account.router');
-const WildcardRouter = require('./routers/wildcard.router');
+const WildcardRouter = require('wapi-core').WildcardRouter;
 
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
@@ -69,7 +72,7 @@ let init = async() => {
     app.use(new AuthMiddleware().middleware());
 
     // Routers
-    app.use(new GenericRouter().router());
+    app.use(new GenericRouter(packageJson.version, `Welcome to the ${packageJson.name}`).router());
     app.use(new AccountRouter().router());
 
     // Always use this last

@@ -18,6 +18,7 @@
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.10.5",
     "shortid": "^2.2.8",
+    "wapi-core": "git+https://github.com/weeb-services/wapi-core.git",
     "winston": "^2.3.1"
   }
 }
