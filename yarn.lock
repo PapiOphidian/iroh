@@ -357,8 +357,8 @@ mongodb@2.2.27:
     readable-stream "2.2.7"
 
 mongoose@^4.10.5:
-  version "4.11.4"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-4.11.4.tgz#3d74111105ee8b619eb1c1d790e7bfc4e8cba7bb"
+  version "4.11.5"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-4.11.5.tgz#59e4a1d84dcd36cc51f3e639b771cb8359f539aa"
   dependencies:
     async "2.1.4"
     bson "~1.0.4"
@@ -573,8 +573,8 @@ vary@^1, vary@~1.1.1:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.1.tgz#67535ebb694c1d52257457984665323f587e8d37"
 
 "wapi-core@git+https://github.com/weeb-services/wapi-core.git":
-  version "1.1.0"
-  resolved "git+https://github.com/weeb-services/wapi-core.git#626345c58ed554800f37b145a9bc71b63b96ef4b"
+  version "1.2.0"
+  resolved "git+https://github.com/weeb-services/wapi-core.git#9ffdd97d948fe399bc3df3aa019cbeac693001b1"
   dependencies:
     axios "^0.16.2"
     express "^4.15.3"
