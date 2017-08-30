@@ -1,22 +1,24 @@
 {
-  "name": "rem-account-service",
-  "version": "0.0.1",
-  "description": "A Microservice for fetching data about accounts using the api",
-  "main": "index.js",
+  "name": "iroh",
+  "version": "1.0.1",
+  "description": "A microservice for fetching account data",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Wolke",
+  "author": "Wolke <wolke@weeb.sh>",
+  "contributors": [
+    "TheAkio <me@theak.io>"
+  ],
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.17.2",
     "cors": "^2.8.3",
-    "docker-config-loader": "^1.0.0",
     "express": "^4.15.3",
+    "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.10.5",
-    "redis": "^2.7.1",
     "shortid": "^2.2.8",
-    "tsubaki": "^1.1.1",
+    "wapi-core": "git+https://github.com/weeb-services/wapi-core.git",
     "winston": "^2.3.1"
   }
 }

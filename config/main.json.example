@@ -1,5 +1,14 @@
 {
   "host": "127.0.0.1",
   "port": 9010,
-  "dburl": "mongodb://localhost/account-api"
+  "dburl": "mongodb://localhost/account-api",
+  "jwt": {
+    "algorithm": "RS256",
+    "privCertFile": "jwtRS256.key",
+    "pubCertFile": "jwtRS256.key.pub"
+  },
+  "masterToken": {
+    "enabled": false,
+    "token": ""
+  }
 }
