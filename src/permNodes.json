@@ -1,0 +1,45 @@
+[
+  {
+    "name": "user_create",
+    "description": "Allows a user to create another user",
+    "routes": [
+      "/user"
+    ]
+  },
+  {
+    "name": "user_list",
+    "description": "Allows a user to get a list of users and get info about a single user",
+    "routes": [
+      "/user",
+      "/user/:user_id"
+    ]
+  },
+  {
+    "name": "user_delete",
+    "description": "Allows a user to delete other users or his own account",
+    "routes": [
+      "/user/:user_id"
+    ]
+  },
+  {
+    "name": "token_create",
+    "description": "Allows a user to create a token for himself or other users, overwrites the old token",
+    "routes": [
+      "/token"
+    ]
+  },
+  {
+    "name": "token_create_self",
+    "description": "Allows a user to create a new token for himself, overwrites the old token",
+    "routes": [
+      "/token"
+    ]
+  },
+  {
+    "name": "token_delete",
+    "description": "Allows a user to delete a token",
+    "routes": [
+      "/token"
+    ]
+  }
+]
