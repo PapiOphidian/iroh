@@ -36,7 +36,10 @@ class AuthMiddleware extends BaseMiddleware {
         let jwtoken = authHeader.split('Bearer ')[1];
         if (jwtoken === '') return HTTPCodes.UNAUTHORIZED;
 
-        if (req.config && req.config.masterToken && req.config.masterToken.enabled && jwtoken === req.config.masterToken.token) return HTTPCodes.OK;
+        if (req.config && req.config.masterToken && req.config.masterToken.enabled && jwtoken === req.config.masterToken.token) {
+            req.account = {id: 'yourIdHere', scopes: ['admin']};
+            return HTTPCodes.OK;
+        }
 
         let decoded;
         try {
