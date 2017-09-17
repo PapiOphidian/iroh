@@ -9,12 +9,29 @@ class AuthMiddleware extends BaseMiddleware {
         super();
         this.whitelist('/');
         this.whitelist('/validate*');
-        this.whitelist('/pubkey');
+        this.whitelist('/permnode');
     }
 
     async exec(req) {
         if (!req.headers || !req.headers.authorization) return HTTPCodes.UNAUTHORIZED;
         let authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Wolke ')) {
+            let wolkeToken = authHeader.split('Wolke ')[1];
+            if (wolkeToken === '') return HTTPCodes.UNAUTHORIZED;
+            let decodedToken = Buffer.from(wolkeToken, 'base64')
+                .toString();
+            let userId = decodedToken.split(':')[0];
+            let account = await accountModel.findOne({id: userId});
+            if (!account) return HTTPCodes.UNAUTHORIZED;
+            if (account.tokens[0]) {
+                let verified = req.wwt.verify(decodedToken.split(':')[1], `${account.id}-${account.tokens[0]}`);
+                if (verified) {
+                    req.account = account;
+                    return HTTPCodes.OK;
+                }
+            }
+            return HTTPCodes.UNAUTHORIZED;
+        }
         if (!authHeader.startsWith('Bearer ')) return HTTPCodes.UNAUTHORIZED;
         let jwtoken = authHeader.split('Bearer ')[1];
         if (jwtoken === '') return HTTPCodes.UNAUTHORIZED;
@@ -25,18 +42,20 @@ class AuthMiddleware extends BaseMiddleware {
         try {
             decoded = await req.jwt.verify(jwtoken);
         } catch (e) {
-            if (e.message === 'jwt malformed') return { status: HTTPCodes.BAD_REQUEST, message: 'Malformed JWT in Authorization header' };
+            if (e.message === 'jwt malformed') return {
+                status: HTTPCodes.BAD_REQUEST,
+                message: 'Malformed JWT in Authorization header',
+            };
             if (e.message === 'invalid signature') return HTTPCodes.UNAUTHORIZED;
             if (e.message === 'invalid algorithm') return HTTPCodes.UNAUTHORIZED;
             throw e;
         }
 
-        let account = await accountModel.findOne({ id: decoded.userId });
+        let account = await accountModel.findOne({id: decoded.userId});
         if (!account) return HTTPCodes.UNAUTHORIZED;
         if (account.tokens.indexOf(decoded.tokenId) === -1) return HTTPCodes.UNAUTHORIZED;
-        if (account.scopes.indexOf('admin') === -1) return HTTPCodes.UNAUTHORIZED;
 
-        req.authUser = account;
+        req.account = account;
         return HTTPCodes.OK;
     }
 }
