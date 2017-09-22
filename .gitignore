@@ -5,3 +5,5 @@ node_modules
 jwtRS256.key
 jwtRS256.key.pub
 package-lock.json
+iroh.iml
+.DS_Store
