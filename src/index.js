@@ -12,13 +12,25 @@ const WolkeWebToken = require('./utils/WolkeWebToken');
 
 const AuthMiddleware = require('./middleware/auth.middleware');
 
-const PermMiddleware = require('wapi-core').PermMiddleware;
+const PermMiddleware = require('@weeb_services/wapi-core').PermMiddleware
 
-const GenericRouter = require('wapi-core').GenericRouter;
+const GenericRouter = require('@weeb_services/wapi-core').GenericRouter
 const AccountRouter = require('./routers/account.router');
-const WildcardRouter = require('wapi-core').WildcardRouter;
+const WildcardRouter = require('@weeb_services/wapi-core').WildcardRouter
 
 const permNodes = require('./permNodes');
+
+const Registrator = require('@weeb_services/wapi-core').Registrator
+const ShutdownHandler = require('@weeb_services/wapi-core').ShutdownHandler
+
+const pkg = require('../package.json')
+const config = require('../config/main')
+let registrator
+
+if (config.registration && config.registration.enabled) {
+  registrator = new Registrator(config.registration.host, config.registration.token)
+}
+let shutdownManager
 
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
@@ -27,17 +39,6 @@ winston.add(winston.transports.Console, {
 });
 
 let init = async () => {
-    let config, pkg;
-    try {
-        config = require('../config/main.json');
-        pkg = require('../package.json');
-    } catch (e) {
-        winston.error(e);
-        winston.error('Failed to require config.');
-        return process.exit(1);
-    }
-    winston.info('Config loaded.');
-
     if (config.masterToken.enabled) winston.warn('Master token is enabled!');
 
     let jwt = new JWT(config.jwt.algorithm);
@@ -88,7 +89,11 @@ let init = async () => {
     // Always use this last
     app.use(new WildcardRouter().router());
 
-    app.listen(config.port, config.host);
+  const server = app.listen(config.port, config.host)
+  shutdownManager = new ShutdownHandler(server, registrator, mongoose, pkg.name)
+  if (registrator) {
+    await registrator.register(pkg.name, [config.env], config.port)
+  }
     winston.info(`Server started on ${config.host}:${config.port}`);
 };
 
@@ -98,3 +103,6 @@ init()
         winston.error('Failed to initialize.');
         process.exit(1);
     });
+
+process.on('SIGTERM', () => shutdownManager.shutdown())
+process.on('SIGINT', () => shutdownManager.shutdown())
