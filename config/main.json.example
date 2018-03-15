@@ -11,5 +11,10 @@
   "masterToken": {
     "enabled": false,
     "token": ""
-  }
+  },
+     "registration":{
+       "enabled":false,
+       "host":"",
+       "token":""
+     }
 }

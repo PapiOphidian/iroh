@@ -3,8 +3,8 @@
 const accountModel = require('../DB/account.mongo');
 const shortid = require('shortid');
 
-const BaseRouter = require('wapi-core').BaseRouter;
-const HTTPCodes = require('wapi-core').Constants.HTTPCodes;
+const BaseRouter = require('@weeb_services/wapi-core').BaseRouter
+const HTTPCodes = require('@weeb_services/wapi-core').Constants.HTTPCodes
 const pkg = require('../../package.json');
 
 class AccountRouter extends BaseRouter {
