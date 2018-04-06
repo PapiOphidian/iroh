@@ -1,8 +1,8 @@
 'use strict';
 
 const accountModel = require('../DB/account.mongo');
-const BaseMiddleware = require('wapi-core').BaseMiddleware;
-const HTTPCodes = require('wapi-core').Constants.HTTPCodes;
+const BaseMiddleware = require('@weeb_services/wapi-core').BaseMiddleware
+const HTTPCodes = require('@weeb_services/wapi-core').Constants.HTTPCodes
 
 class AuthMiddleware extends BaseMiddleware {
     constructor() {
