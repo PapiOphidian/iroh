@@ -7,3 +7,4 @@ jwtRS256.key.pub
 package-lock.json
 iroh.iml
 .DS_Store
+dist
