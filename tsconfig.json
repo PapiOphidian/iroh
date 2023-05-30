@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"declaration": false,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"incremental": true,
+		"lib": ["esnext", "dom"],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noUnusedLocals": false,
+		"outDir": "./dist",
+		"pretty": true,
+		"removeComments": true,
+		"resolveJsonModule": true,
+		"sourceMap": false,
+		"skipLibCheck": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictNullChecks": true,
+		"target": "ES2020",
+		"types": ["node", "jest", "./types/express.d.ts", "./types/wapi-core.d.ts"],
+		"rootDir": "src"
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules"]
+}
