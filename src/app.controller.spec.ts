@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { AccountController } from './controllers/account';
 import { AccountService } from './services/account';
+import accountModel = require('./DB/account.mongo');
 
 describe('AppController', () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let appController: AccountController;
 
   beforeEach(async () => {

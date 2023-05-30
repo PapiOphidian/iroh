@@ -12,7 +12,7 @@ import type { Account, Config, ErrorResponse } from '../types';
 import accountModel from '../DB/account.mongo';
 
 const pkg: import('../types').Package = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../package.json'), {
+  fs.readFileSync(path.join(__dirname, '../../package.json'), {
     encoding: 'utf-8',
   }),
 );

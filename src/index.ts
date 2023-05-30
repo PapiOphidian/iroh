@@ -43,7 +43,7 @@ if (config.registration?.enabled) {
   );
 }
 let shutdownManager;
-// winston.add(winston.transports.Console) now doesn't allow config
+winston.add(new winston.transports.Console());
 
 const init = async () => {
   if (config.masterToken.enabled) winston.warn('Master token is enabled!');
@@ -104,5 +104,9 @@ init().catch((e) => {
   return process.exit(1);
 });
 
-process.on('SIGTERM', () => shutdownManager.shutdown());
-process.on('SIGINT', () => shutdownManager.shutdown());
+process.on('SIGTERM', () =>
+  shutdownManager ? shutdownManager.shutdown() : process.exit(),
+);
+process.on('SIGINT', () =>
+  shutdownManager ? shutdownManager.shutdown() : process.exit(),
+);
